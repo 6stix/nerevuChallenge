@@ -26,7 +26,9 @@ def return_holidays():
     It will check to see if "holidayType" was passed to the API. If it was,
     the returned results will only be of the specified holiday type if the
     type is valid.
-    The federal example url: http://localhost:5000/holidays?holidayType=Federal%20Holiday
+    
+    The federal holiday example url:
+    http://localhost:5000/holidays?holidayType=Federal%20Holiday
     """
     upcoming_holidays = []
     try:
@@ -36,5 +38,26 @@ def return_holidays():
 
     number_of_holidays = 10
     upcoming_holidays = holidays.holidays(number_of_holidays, holiday_type)
+
+    return json.dumps(upcoming_holidays)
+
+@app.route('/holidays_2')
+def return_holidays_2():
+    """
+    Test using the CSV file I created with web-scraping.
+
+    The federal holiday example url:
+    http://localhost:5000/holidays_2?holidayType=Federal%20Holiday
+    """
+    upcoming_holidays = []
+    try:
+        holiday_type = flask.request.args['holidayType']
+    except:
+        holiday_type = None
+
+    mode = True
+
+    number_of_holidays = 10
+    upcoming_holidays = holidays.holidays(number_of_holidays, holiday_type, mode=mode)
 
     return json.dumps(upcoming_holidays)
