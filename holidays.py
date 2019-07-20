@@ -229,7 +229,7 @@ def write_holidays_csv(fname):
                             details += child
 
                 #details = details[:-1] + "\""
-                details = details.strip() + "\""
+                details += "\""
                 if "\u00a0" in details or details == "\"":
                     details = ""
 
