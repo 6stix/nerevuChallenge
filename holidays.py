@@ -1,14 +1,10 @@
 """
-AN9cn1faxv
-ijUEs7STn8plCOBq7HENHaNSumw
+This file has the functionality to web-scrape timeanddate.com's holiday data. This
+file serves as the logic-backbone for the simple Flask API that returns x upcoming
+holidays.
 
-secret: KjpP6annnePfpKA93Twd
-
-https://api.xmltime.com/holidays?country=us
-&year=2011&version=2&out=json&prettyprint=1
-&accesskey={KEY}&expires={TIMESTAMP}&signature={SIGNATURE}
-
-2019-07-20T02:23:07+00:00
+Author: Nav
+Date: July 20th, 2019
 """
 
 import requests

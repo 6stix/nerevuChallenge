@@ -26,7 +26,7 @@ def return_holidays():
     It will check to see if "holidayType" was passed to the API. If it was,
     the returned results will only be of the specified holiday type if the
     type is valid.
-    
+
     The federal holiday example url:
     http://localhost:5000/holidays?holidayType=Federal%20Holiday
     """
