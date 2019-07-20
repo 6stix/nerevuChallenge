@@ -20,14 +20,25 @@ import datetime
 
 def main():
     """
-    This main function can be used to create the CSV.
+    Calling this python file will lead to creating the CSV.
     """
-    # write_holidays_csv("holidays.csv")
-    holidays_arr = holidays_to_arr("holidays2019-sheets.csv")
-    next_ten_holidays = upcoming_holidays(10, holidays_arr)
+    write_holidays_csv("holidays.csv")
 
-def holidays(number_of_holidays, holiday_type=None):
-    holidays_arr = holidays_to_arr("holidays2019-sheets.csv", holiday_type)
+    # holidays_arr = holidays_to_arr("holidays2019-sheets.csv")
+    # next_ten_holidays = upcoming_holidays(10, holidays_arr)
+
+def holidays(number_of_holidays, holiday_type=None, mode=None):
+    """
+    This function returns the next "number_of_holidays" worth of holidays, based-on
+    the holiday_type and the mode. The mode determines which CSV file gets used.
+    The two CSV files are the default (when mode == None) which is a copy and paste
+    from the timeanddate website.
+    """
+    fname = "copypaste2019Holidays.csv"
+    if mode != None:
+        fname = "holidays.csv"
+
+    holidays_arr = holidays_to_arr(fname, holiday_type)
     next_holidays = upcoming_holidays(number_of_holidays, holidays_arr)
 
     return next_holidays
@@ -164,7 +175,7 @@ def all_values_empty(array):
 
 def write_holidays_csv(fname):
     """
-    Web-scrape timeanddate.com for holiday data.
+    Web-scrapes timeanddate.com for holiday data.
     """
     response = requests.get("https://www.timeanddate.com/holidays/us/")
     content = response.text
@@ -186,14 +197,8 @@ def write_holidays_csv(fname):
     # Fields: date, extra date, name, type, details
 
     holidays_table = table_tag.contents[1]
-    # print(holidays_table.contents[21]) # -> entry of hol_feb
-
     holidays_table = holidays_table.contents
 
-    for entry in holidays_table:
-        pass
-
-    # print(len(holidays_table))
     stripped = []
     for a in holidays_table:
         if "hol_" not in str(a):
@@ -201,24 +206,51 @@ def write_holidays_csv(fname):
 
     num_fields = len(fields)
 
-    holidays_array = []
+    holidays_arr = [",".join(fields)]
     for block in stripped:
         holiday_string = ""
         curr_block = block.th
 
         for i in range(num_fields):
-            to_iterate = curr_block.contents
-            iter_str = to_iterate
-            #iter_str = " ".join(to_iterate)
+            curr_block_contents = curr_block.contents
+            #curr_block_contents = " ".join(curr_block_contents)
+            #print("To iter:", curr_block_contents)
 
-            print("To iter:", iter_str)
+            # check if curr_field is 'name'
+            if i == 2:
+                name = curr_block_contents[0].contents[0]
+                holiday_string += name + ","
+                curr_block = curr_block.next_sibling
 
-            holiday_string += str(curr_block.contents[0]) + ","
-            curr_block = curr_block.next_sibling
+            # check if curr_field is 'details'
+            elif i == 4:
+                details = "\""
+                for child in curr_block_contents:
+                    try:
+                        details += str(child.contents[0]) + ", "
+                    except:
+                        if child != None and child != "" and child.replace(" ", "") != ",":
+                            details += child
 
-        holidays_array.append(holiday_string)
+                #details = details[:-1] + "\""
+                details += "\""
+                if details == "\"":
+                    details = ""
 
-    print("Holiday Info:\n",holidays_array[-1])
+                holiday_string += details
+
+            else:
+                holiday_string += str(curr_block.contents[0]) + ","
+                curr_block = curr_block.next_sibling
+
+        holidays_arr.append(holiday_string)
+
+    # print("Holiday Info:\n", holidays_arr[38])
+    # print("Holiday Info:\n", holidays_arr[-1])
+
+    with open('holidays.csv', 'w') as f:
+        for row in holidays_arr:
+            f.write(row + "\n")
 
 if __name__ == '__main__':
     main()
